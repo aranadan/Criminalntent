@@ -26,6 +26,12 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
     private static final String DIALOG_DATE = "DialogDate";
     private static final int REQUEST_DATE = 0;
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        CrimeLab.get(getActivity()).updateCrime(mCrime);
+    }
+
     private Crime mCrime;
     private EditText mTitleField;
     private Button mDateButton;
