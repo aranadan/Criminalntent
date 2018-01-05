@@ -11,6 +11,7 @@ import com.example.andrey.criminalIntent.database.CrimeCursorWrapper;
 import com.example.andrey.criminalIntent.database.CrimeDbSchema;
 import com.example.andrey.criminalIntent.database.CrimeDbSchema.CrimeTable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -20,6 +21,7 @@ public class CrimeLab {
     private static CrimeLab sCrimeLab;
     Context mContext;
     SQLiteDatabase mDatabase;
+
 
     public static CrimeLab get(Context context) {
         if (sCrimeLab == null) {
@@ -89,6 +91,7 @@ public class CrimeLab {
         values.put(CrimeTable.Cols.TITLE, crime.getmTitle());
         values.put(CrimeTable.Cols.DATE, crime.getmDate().getTime());
         values.put(CrimeTable.Cols.SOLVED, crime.ismSolved() ? 1 : 0);
+        values.put(CrimeTable.Cols.SUSPECT, crime.getmSuspect());
 
         return values;
     }
@@ -117,4 +120,13 @@ public class CrimeLab {
         return new CrimeCursorWrapper(cursor);
     }
 
+    public  void deleteCrime(Crime crime) {
+        mDatabase.delete(CrimeTable.NAME,CrimeTable.Cols.UUID + " = ?", new String[]{crime.getmId().toString()});
+    }
+
+    public File getPhotoFile(Crime crime){
+        File fileDir = mContext.getFilesDir();
+        return new File(fileDir,crime.getPhotoFilename());
+        //if (externalFilesDir == null){}
+    }
 }

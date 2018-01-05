@@ -9,6 +9,15 @@ private UUID mId;
 private String mTitle;
 private Date mDate;
 private boolean mSolved;
+private String mSuspect;
+
+    public String getmSuspect() {
+        return mSuspect;
+    }
+
+    public void setmSuspect(String mSuspect) {
+        this.mSuspect = mSuspect;
+    }
 
     public Crime(){
         this(UUID.randomUUID());
@@ -45,5 +54,9 @@ private boolean mSolved;
 
     public void setmSolved(boolean mSolved) {
         this.mSolved = mSolved;
+    }
+
+    public String getPhotoFilename(){
+        return "IMG_" + getmId().toString() + ".jpg";
     }
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!--назначает корневой путь хранилища для file_provider-->
+    <files-path
+        name="crime_photos"
+        path="."/>
+</paths>
