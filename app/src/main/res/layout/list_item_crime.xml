@@ -5,7 +5,8 @@
     android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:layout_editor_absoluteY="81dp">
+    tools:layout_editor_absoluteY="81dp"
+    android:background="@android:color/white">
 
     <TextView
         android:id="@+id/crime_title"

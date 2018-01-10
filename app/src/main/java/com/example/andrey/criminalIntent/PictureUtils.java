@@ -26,7 +26,7 @@ public static Bitmap getScaleBitmap (String path, int destWidth, int destHeight)
     options = new BitmapFactory.Options();
     options.inSampleSize = inSampleSize;
 
-    //Чтение данных и создание отогового изображения
+    //Чтение данных и создание готогового изображения
     return BitmapFactory.decodeFile(path,options);
 }
 

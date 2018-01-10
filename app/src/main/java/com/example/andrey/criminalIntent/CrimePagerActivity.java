@@ -12,7 +12,7 @@ import android.os.Bundle;
 import java.util.List;
 import java.util.UUID;
 //с помощью этого класса можно листать крайм фрагменты влево и вправо свайпом
-public class CrimePagerActivity extends AppCompatActivity {
+public class CrimePagerActivity extends AppCompatActivity implements CrimeFragment.Callback{
 
     private ViewPager mViewPager;
     private List<Crime> mCrimes;
@@ -58,5 +58,10 @@ public class CrimePagerActivity extends AppCompatActivity {
         Intent intent = new Intent(packageContext, CrimePagerActivity.class);
         intent.putExtra(EXTRA_CRIME_ID, crimeID);
         return intent;
+    }
+
+    @Override
+    public void onCrimeUpdated() {
+
     }
 }

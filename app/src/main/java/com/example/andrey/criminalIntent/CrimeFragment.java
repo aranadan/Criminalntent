@@ -2,6 +2,7 @@ package com.example.andrey.criminalIntent;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -54,11 +55,23 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
     private File mPhotoFile;
+    private Callback mCallbacks;
+
+    //необходимый интерфейс дл\ активности хоста
+    public interface Callback{
+        void onCrimeUpdated();
+    }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        CrimeLab.get(getActivity()).updateCrime(mCrime);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mCallbacks = (Callback) context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
     }
 
     // метод для передечи во фрагмент Ид преступление перед отображением его в активности
@@ -71,8 +84,6 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
         return fragment;
     }
 
-
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +92,12 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
         //get crime object from singletone by id
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeID);
         mPhotoFile = CrimeLab.get(getActivity()).getPhotoFile(mCrime);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        CrimeLab.get(getActivity()).updateCrime(mCrime);
     }
 
     @Nullable
@@ -99,6 +116,7 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 mCrime.setmTitle(charSequence.toString());
+                updateCrime();
             }
 
             @Override
@@ -142,6 +160,7 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
 
                 mCrime.setmSolved(isChecked);
+                updateCrime();
             }
         });
 
@@ -209,6 +228,12 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
             }
         });
         mPhotoView = (ImageView) v.findViewById(R.id.crime_photo);
+        mPhotoView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PhotoFragment.newInstance(mPhotoFile).show(getFragmentManager(),"PhotoFragment");
+            }
+        });
         updatePhotoView();
 
         return v;
@@ -222,6 +247,7 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
         if (requestCode ==  REQUEST_DATE){
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setmDate(date);
+            updateCrime();
             updateDate();
         }else if (requestCode == REQUEST_CONTACT && data != null){
             Uri contactUri = data.getData();
@@ -238,6 +264,7 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
                 c.moveToFirst();
                 String suspect = c.getString(0);
                 mCrime.setmSuspect(suspect);
+                updateCrime();
                 mSuspectButton.setText(suspect);
 
             }finally {
@@ -246,7 +273,7 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
         }else if (requestCode == REQUEST_PHOTO){
             Uri uri = FileProvider.getUriForFile(getActivity(),"com.example.andrey.criminalIntent.fileprovider",mPhotoFile);
             getActivity().revokeUriPermission(uri,Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-
+            updateCrime();
             updatePhotoView();
         }
 
@@ -287,5 +314,10 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
             Bitmap bitmap = PictureUtils.getScaleBitmap(mPhotoFile.getPath(),getActivity());
             mPhotoView.setImageBitmap(bitmap);
         }
+    }
+
+    private void updateCrime(){
+        CrimeLab.get(getActivity()).updateCrime(mCrime);
+        mCallbacks.onCrimeUpdated();
     }
 }
