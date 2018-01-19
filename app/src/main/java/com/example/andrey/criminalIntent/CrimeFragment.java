@@ -155,11 +155,12 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
 
         mSolvedCheckBox = (CheckBox) v.findViewById(R.id.crime_solved);
         mSolvedCheckBox.setChecked(mCrime.ismSolved());
+        mCrimeIsSolvedGetContentDescription();
         mSolvedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-
                 mCrime.setmSolved(isChecked);
+                mCrimeIsSolvedGetContentDescription();
                 updateCrime();
             }
         });
@@ -310,14 +311,23 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
     private void updatePhotoView(){
         if (mPhotoFile == null || !mPhotoFile.exists()){
             mPhotoView.setImageDrawable(null);
+            mPhotoView.setContentDescription(getString(R.string.crime_photo_no_image_description));
         }else{
             Bitmap bitmap = PictureUtils.getScaleBitmap(mPhotoFile.getPath(),getActivity());
             mPhotoView.setImageBitmap(bitmap);
+            mPhotoView.setContentDescription(getString(R.string.crime_photo_image_description));
         }
     }
 
     private void updateCrime(){
         CrimeLab.get(getActivity()).updateCrime(mCrime);
         mCallbacks.onCrimeUpdated();
+    }
+
+    private void mCrimeIsSolvedGetContentDescription(){
+        if (mCrime.ismSolved()){
+            mSolvedCheckBox.setContentDescription(getString(R.string.crime_solved));
+        }else
+        {mSolvedCheckBox.setContentDescription(getString(R.string.crime_not_solved));}
     }
 }
